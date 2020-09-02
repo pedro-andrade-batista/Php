@@ -108,6 +108,33 @@ class DepartamentoDAO{
         }	
 
     }
+    function getIdByName($nome){
+        try{
+            $sql = "SELECT id FROM departamento where nome = :nome";
+
+            $instance = DatabaseConnection::getInstance();
+			$conn = $instance->getConnection();
+			$statement = $conn->prepare($sql);
+
+            $statement->bindValue(":nome",$nome);
+
+            $statement->execute();
+
+            $id = $statement->fetchAll();
+            
+            if(count($id) == 0)
+                return null;
+            
+            foreach($id as $value){
+
+                return $value["id"];
+            }
+            
+        } catch (PDOException $e) {
+            echo "Erro ao recuperar o nome do departamento na base de dados.".$e->getMessage();
+        }	
+
+    }
 }
 
 

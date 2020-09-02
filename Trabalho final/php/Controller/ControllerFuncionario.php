@@ -2,6 +2,7 @@
 
 include_once $_SESSION["root"].'php/DAO/FuncionarioDAO.php';
 include_once $_SESSION["root"].'php/Model/ModelFuncionario.php';
+include_once $_SESSION["root"].'php/DAO/PermissaoDAO.php';
 
 class ControllerFuncionario {
 	function getAllFuncionarios(){
@@ -14,11 +15,16 @@ class ControllerFuncionario {
 		$funcDAO = new FuncionarioDAO();
 		$funcionario = new ModelFuncionario();
 		$funcionario->setFuncionarioFromPOST();
+		$funcionario->setIdDepartamento($funcDAO->getIdDepartamentobyName($_POST["departamento"]));
+		$funcionario->setIdPermissao($funcDAO->getIdPermissaobyTipo($_POST["permissao"]));
+
+		
 		$resultadoInsercao = $funcDAO->setFuncionario($funcionario);
 			
 		if($resultadoInsercao){
 			$_SESSION["flash"]["msg"]="Funcionário Cadastrado com Sucesso";
-			$_SESSION["flash"]["sucesso"]=true;			
+			$_SESSION["flash"]["sucesso"]=true;
+			
 		}
 		else{
 			$_SESSION["flash"]["msg"]="O Login já existe no banco";
@@ -28,12 +34,19 @@ class ControllerFuncionario {
 			$_SESSION["flash"]["login"]=$funcionario->getLogin();
 			$_SESSION["flash"]["salario"]=$funcionario->getSalario();
 		}
-		include_once $_SESSION["root"].'php/View/ViewCadastraFuncionario.php';
+		//header("Location:cadastraFuncionario");
+		//include_once $_SESSION["root"].'php/View/ViewCadastraFuncionario.php';
+		$this->getDepartamentos();
 	}
 	function updateFuncionario($func){
 		$funcDAO = new FuncionarioDAO();
+		$deptoDAO = new DepartamentoDAO();
+		$permDAO = new PermissaoDAO();
 		$funcionario = new ModelFuncionario();
 		$funcionario->updateFuncionarioFromPOST($func);
+
+		$funcionario->setIdDepartamento($deptoDAO->getIdByName($_POST["departamento"]));
+		$funcionario->setIdPermissao($permDAO->getIdByType($_POST["permissao"]));
 
 
 		if(empty($_POST["senha"])){
@@ -54,27 +67,39 @@ class ControllerFuncionario {
 
 	function getFuncionarioById($id){
 		$funcDAO = new FuncionarioDAO();
+		$deptoDAO = new DepartamentoDAO();
+		$permDAO = new PermissaoDAO();
+		
 		$funcRetornado = $funcDAO->getFuncionarioDAOById($id);
-		/*
-		echo "<pre>";
-		print_r ($funcRetornado);
-		echo "</pre>";
-		*/
+		
+		//Criado para não exibir os id's na view e sim o nome de cada deportamento e permissao
+		$funcRetornado["nomeDepartamento"] = $deptoDAO->getNameById($funcRetornado["idDepartamento"]);
+		$funcRetornado["tipoPermissao"] = $permDAO->getTipoById($funcRetornado["idPermissao"]);
+
+		
+
+
 		$_SESSION["flash"]["nome"]=$funcRetornado["nome"];
 		$_SESSION["flash"]["login"]=$funcRetornado["login"];
 		$_SESSION["flash"]["salario"]=$funcRetornado["salario"];
 		$_SESSION["flash"]["senha"]=$funcRetornado["senha"];
-		$_SESSION["flash"]["permissao"]=$funcRetornado["idPermissao"];
-		$_SESSION["flash"]["departamento"]=$funcRetornado["idDepartamento"];
+		$_SESSION["flash"]["permissao"]=$funcRetornado["tipoPermissao"];
+		$_SESSION["flash"]["departamento"]=$funcRetornado["nomeDepartamento"];
+		
 		return $funcRetornado;
 	}
 
-	function getDepartamentos(){
-		$deptoDAO = new DepartamentoDAO();		
+	function getDataForView($value){
+		$deptoDAO = new DepartamentoDAO();
+		$permDAO = new PermissaoDAO();
+		$permissoes = $permDAO->getAllPermissao();
 		$departamentos=$deptoDAO->getAllDepartamentos();
 		//print_r($departamentos);
 		
-		require_once $_SESSION["root"].'php/View/ViewCadastraFuncionario.php';
+		if($value == "cadastro")
+			require_once $_SESSION["root"].'php/View/ViewCadastraFuncionario.php';
+		else if($value == "editar")
+		require_once $_SESSION["root"].'php/View/ViewEditaFuncionario.php';
 	}
 
 }

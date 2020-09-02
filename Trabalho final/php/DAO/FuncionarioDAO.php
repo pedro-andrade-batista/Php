@@ -181,4 +181,57 @@ class FuncionarioDAO {
             echo "Erro ao recuperar o tipo de permissao na base de dados.".$e->getMessage();
         }	
     }
+
+    function getIdDepartamentobyName($value){
+        try{
+            $sql = "SELECT id FROM departamento where nome = :nome";
+
+            $instance = DatabaseConnection::getInstance();
+			$conn = $instance->getConnection();
+			$statement = $conn->prepare($sql);
+
+            $statement->bindValue(":nome",$value);
+
+            $statement->execute();
+
+            $nome = $statement->fetchAll();
+            
+            if(count($nome) == 0)
+                return null;
+            
+            foreach($nome as $valor){
+                return $valor["id"];
+            }
+            
+        } catch (PDOException $e) {
+            echo "Erro ao recuperar o tipo de permissao na base de dados.".$e->getMessage();
+        }	
+    }
+
+    function getIdPermissaobyTipo($value){
+        try{
+            $sql = "SELECT id FROM permissao where tipo = :tipo";
+
+            $instance = DatabaseConnection::getInstance();
+			$conn = $instance->getConnection();
+			$statement = $conn->prepare($sql);
+
+            $statement->bindValue(":tipo",$value);
+
+            $statement->execute();
+
+            $tipo = $statement->fetchAll();
+            
+            if(count($tipo) == 0)
+                return null;
+            
+            foreach($tipo as $valor){
+                return $valor["id"];
+            }
+            
+        } catch (PDOException $e) {
+            echo "Erro ao recuperar o tipo de permissao na base de dados.".$e->getMessage();
+        }	
+    }
+    
 }

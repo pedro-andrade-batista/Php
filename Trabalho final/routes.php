@@ -51,7 +51,8 @@ else if(isset($_SESSION["logado"]) && $_SESSION["logado"]==true){
 	}
 	else if ($action == 'cadastraFuncionario' && $_SESSION["permissao"] == 1) {
 		$cFunc = new ControllerFuncionario();
-		$cFunc->getDepartamentos();
+		$cFunc->getDataForView("cadastro"); 
+		
 	}
 	else if ($action == 'postCadastraFuncionario' && $_SESSION["permissao"] == 1) {
 		$cFunc = new ControllerFuncionario();
@@ -72,7 +73,8 @@ else if(isset($_SESSION["logado"]) && $_SESSION["logado"]==true){
 	else if($action == 'EditaFuncionario' && $_SESSION["permissao"] == 1){
 		$cFunc = new ControllerFuncionario();
 		$_SESSION["funcionario"] = $cFunc->getFuncionarioById($_GET["id"]);
-		require_once $_SESSION["root"].'php/View/ViewEditaFuncionario.php';
+		$cFunc->getDataForView("editar");
+
 	}
 	else if($action == 'postEditaFuncionario' && $_SESSION["permissao"] == 1){
 		$cFunc = new ControllerFuncionario();

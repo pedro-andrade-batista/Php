@@ -46,8 +46,8 @@ class ModelFuncionario {
                ->setSalario($_POST["salario"])
                ->setLogin($_POST['login'])
                ->setSenhaPOST($_POST['senha'])
-               ->setIdPermissao($_POST['permissao'])
-               ->setIdDepartamento($_POST['departamento']);
+               ->setIdPermissao($func['idPermissao'])
+               ->setIdDepartamento($func['idDepartamento']);
     }
     
 

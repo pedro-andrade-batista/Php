@@ -45,8 +45,14 @@ include $_SESSION["root"].'includes/header.php';
 					<div class="col-md-6">
 							<div class="form-group">
 								<label for="permissao">Permissão:<span class="requerido">*</span></label>
-								<input type="number" name="permissao" class="form-control" id="permissao" 
-									value="<?php if(isset($_SESSION["flash"]["permissao"]))echo $_SESSION["flash"]["permissao"];?>">
+
+								<select name="permissao" class="form-control" id="permissao">
+									<?php foreach($permissoes as $value):?>
+									<option>
+										<?=$value->tipo;?>
+									</option>
+									<?php endforeach;?>
+								</select>
 							</div>
 						</div>
 						<div class="col-md-6">
